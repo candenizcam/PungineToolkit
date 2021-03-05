@@ -26,12 +26,15 @@ class ColouredMap: Scene("colouredMap") {
     }
     val tempGrid = TiledDisplay(5,5,).also {
         it.modifyTile("test",Displayer(Color.RED))
+        it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
     }
     var moveActive = false
     var drawActive = false
+    var eraserActive = false
     var moving = false
     var initialClick = Point(0f,0f)
     val gridRectangle =  Rectangle(0.15f,0.85f,0.05f,0.95f)
+    var activeTile = "test"
 
     init {
 
@@ -96,6 +99,14 @@ class ColouredMap: Scene("colouredMap") {
                     mainDistrict.findPlot("gridProperties").visible=true
                 }
             }
+
+            it[3].element = SetButton(References.buttonTextBox("eraser",24),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    deactivateAllButtons()
+                    it2.inactive = true
+                    eraserActive= true
+                }
+            }
         }
 
 
@@ -129,7 +140,7 @@ class ColouredMap: Scene("colouredMap") {
     var blockList = mutableListOf<Pair<Int, Int>>()
     override fun update() {
         //blockList.forEach { motherGrid.modifyGrid(null,it.first,it.second) }
-        if(drawActive){
+        if(drawActive||eraserActive){
             tempGrid.clearGrid()
             val point = mainDistrict.getPunRatedPointOnPlot("tempGrid",PuniversalValues.cursorPoint,true)
             val row = ((1-point.y)*motherGrid.rows-0.0001f).toInt()+1
@@ -156,13 +167,19 @@ class ColouredMap: Scene("colouredMap") {
                 }.toMutableList()
 
             }else{
-                blockList.forEach { motherGrid.modifyGrid("test",it.first,it.second) }
+                val thing = if(drawActive) "test" else null
+                blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
                 blockList.clear()
             }
         }else{
             blockList.clear()
         }
-        blockList.forEach { tempGrid.modifyGrid("test",it.first,it.second) }
+        if(drawActive){
+            blockList.forEach { tempGrid.modifyGrid(activeTile,it.first,it.second) }
+        }else if (eraserActive){
+            blockList.forEach { tempGrid.modifyGrid("eraser",it.first,it.second) }
+        }
+
 
 
         rollFunction()
