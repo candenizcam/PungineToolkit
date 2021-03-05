@@ -61,5 +61,58 @@ object Colours{
         return byHSV((h/255f).coerceIn(0f,1f),(s/255f).coerceIn(0f,1f),(v/255f).coerceIn(0f,1f),(a/255f).coerceIn(0f,1f))
     }
 
-    //TODO hex code
+    /** hex code entry to get colour
+     * warning, # is omitted
+     */
+    fun byHex(hexCode: String): Color {
+        return when(hexCode.length){
+            3->{
+                val r = decodeHex(hexCode[0])*17
+                val g = decodeHex(hexCode[1])*17
+                val b = decodeHex(hexCode[2])*17
+                byRGBA256(r,g,b)
+            }
+            4->{
+                val r = decodeHex(hexCode[0])*17
+                val g = decodeHex(hexCode[1])*17
+                val b = decodeHex(hexCode[2])*17
+                val a = decodeHex(hexCode[3])*17
+                byRGBA256(r,g,b,a)
+            }
+            6->{
+                val r = decodeHex(hexCode[0])*16 + decodeHex(hexCode[1])
+                val g = decodeHex(hexCode[2])*16 + decodeHex(hexCode[3])
+                val b = decodeHex(hexCode[4])*16 + decodeHex(hexCode[5])
+                byRGBA256(r,g,b)
+            }
+            8->{
+                val r = decodeHex(hexCode[0])*16 + decodeHex(hexCode[1])
+                val g = decodeHex(hexCode[2])*16 + decodeHex(hexCode[3])
+                val b = decodeHex(hexCode[4])*16 + decodeHex(hexCode[5])
+                val a = decodeHex(hexCode[6])*16 + decodeHex(hexCode[7])
+                byRGBA256(r,g,b,a)
+            }
+            else -> {
+                throw Exception("Error, $hexCode is invalid")
+            }
+
+
+        }
+    }
+
+    private fun decodeHex(c: Char): Int {
+        return try{
+            "$c".toInt()
+        }catch (e: Exception){
+            when(c){
+                'A' -> 10
+                'B' -> 11
+                'C' -> 12
+                'D' -> 13
+                'E' -> 14
+                'F' -> 15
+                else -> throw (Exception("Error, invalid char $c for hex decoding"))
+            }
+        }
+    }
 }

@@ -7,7 +7,7 @@ import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
 import modules.basic.Colours
 import modules.simpleUi.text.ColouredTextBox
-import modules.uiPlots.DrawingRectangle
+import modules.uiPlots.DrawData
 
 class SetButton: Building {
     constructor(upDisplayer: DisplayBuilding, downDisplayer: DisplayBuilding?=null, upRectangle: Rectangle=FastGeometry.unitSquare(), downRectangle: Rectangle=FastGeometry.unitSquare()){
@@ -83,14 +83,14 @@ class SetButton: Building {
     }
 
 
-    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle) {
+    override fun draw(batch: SpriteBatch, drawData: DrawData, alpha:Float) {
         var av = buttonVisuals.filter { it.id==activeVisual }
         if(av.isEmpty()){
             av =  buttonVisuals.filter { it.id == ButtonId.UP }
         }
-        val dr = drawingRectangle.ratedCopy(av[0].rectangle)
+        val dr = drawData.getPxRatedCopy(av[0].rectangle)
         if(dr.toBeDrawn()){
-            av[0].visual.draw(batch, dr)
+            av[0].visual.draw(batch, dr,alpha)
         }
 
     }

@@ -1,5 +1,7 @@
 package com.pungo.modules.basic.geometry
 
+import java.lang.Exception
+
 class Rectangle : ConvexPolygon {
     var top: Float
     var bottom: Float
@@ -53,6 +55,18 @@ class Rectangle : ConvexPolygon {
         return Point((p.x - left)/width,(p.y-bottom)/height)
     }
 
+
+    /** This works such that: r == r.getSubRectangle(other).invertSubRectangle(other)
+     *
+     */
+    fun invertSubRectangle(other: Rectangle): Rectangle {
+        val l = left - width*other.left/other.width
+        val r = right + width/other.width*(1-other.right)
+        val b = bottom - height*other.bottom/other.height
+        val t = top + height/other.height*(1-other.top)
+        return Rectangle(l, r, b, t)
+    }
+
     /** This function takes itself as unit rectangle and input as ratios for it, and returns the adjusted rectangle
      * ex: this = (left: 0,bottom: 0,right: 2,top: 1), other = (0.25,0.25,0.75,0.75) ->  (0.5,0.25,1.5,0.75)
      */
@@ -76,6 +90,16 @@ class Rectangle : ConvexPolygon {
         return !(c1||c2||c3||c4)
     }
 
+    /** Takes a rectangle, and returns the rated rectangle
+     */
+    fun getRatedRectangle(r: Rectangle): Rectangle{
+        val w1 = (r.left-left)/width
+        val w2 = (r.right-left)/width
+        val h1 = (r.bottom - bottom)/height
+        val h2 = (r.top-bottom)/height
+        return Rectangle(w1,w2,h1,h2)
+    }
+
     fun getSubRectangle(width: Float, height: Float): Rectangle {
         return getSubRectangle(width/height)
     }
@@ -94,6 +118,14 @@ class Rectangle : ConvexPolygon {
         val r = this.left + this.centre.x+w2/2
         val b = this.bottom + this.centre.y-h2/2
         val t = this.bottom + this.centre.y+h2/2
+        return Rectangle(l,r,b,t)
+    }
+
+    fun getIntersection(other: Rectangle): Rectangle{
+        val l = this.left.coerceAtLeast(other.left)
+        val r = this.right.coerceAtMost(other.right)
+        val b = this.bottom.coerceAtLeast(other.bottom)
+        val t = this.top.coerceAtMost(other.top)
         return Rectangle(l,r,b,t)
     }
 
@@ -145,6 +177,65 @@ class Rectangle : ConvexPolygon {
             Rectangle(this.left, this.right, within.height - this.bottom, within.height - this.top)
         } else {
             copy()
+        }
+    }
+
+    /** Returns the area of the rectangle
+     */
+    fun area(): Float {
+        return width*height
+    }
+
+    /** Returns a rectangle that is pushed to one side of this rectangle with the same area
+     * errorIfBigger: if the other rectangle is larger, returns error when true, returns cocentric when false, default is true
+     */
+    fun getPushedRectangle(other: Rectangle, errorIfBigger: Boolean=true): Rectangle{
+        return if(other.area()==getIntersection(other).area()){
+            other
+        }else{
+            if((other.width>width)||(other.height>height)){
+                if(errorIfBigger){
+                    throw Exception("pushed rectangle is bigger than the mother rectangle")
+                }else{
+                    Rectangle(other.width,other.height,centre)
+                }
+            }else{
+                val l: Float
+                val r: Float
+                when {
+                    other.left<0f -> {
+                        l = 0f
+                        r = other.width
+                    }
+                    other.right>1f -> {
+                        l = 1f
+                        r = 1f-other.width
+                    }
+                    else -> {
+                        l = other.left
+                        r = other.right
+                    }
+                }
+
+                val t: Float
+                val b: Float
+                when {
+                    other.bottom<0f -> {
+                        b = 0f
+                        t = other.height
+                    }
+                    other.top>1f -> {
+                        t = 1f
+                        b = 1f-other.height
+                    }
+                    else -> {
+                        b = other.bottom
+                        t = other.top
+                    }
+                }
+                Rectangle(l,r,t,b)
+            }
+
         }
     }
 

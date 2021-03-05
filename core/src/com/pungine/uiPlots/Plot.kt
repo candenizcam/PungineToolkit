@@ -5,9 +5,8 @@ import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
 import modules.simpleUi.Building
-import modules.simpleUi.Campus
 
-open class Plot(val id: String, var estate: Rectangle = FastGeometry.unitSquare(), var z: Int = 0, element: Building? = null) {
+open class Plot(val id: String, var estate: Rectangle = FastGeometry.unitSquare(), var z: Int = 0, element: Building? = null, var zoomRectangle: Rectangle = FastGeometry.unitSquare()) {
     var visible = true
         set(value) {
             field = value
@@ -20,12 +19,6 @@ open class Plot(val id: String, var estate: Rectangle = FastGeometry.unitSquare(
     var inactive = false //handled on district level
     var touchStopper = true // if false things behind this can be touched
     var element: Building? = element
-    set(value) {
-        field = value
-        if(value is Campus){
-            value.estatePointer = estate
-        }
-    }
 
 
 

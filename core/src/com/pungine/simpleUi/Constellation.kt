@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
-import modules.uiPlots.DrawingRectangle
+import modules.uiPlots.DrawData
 
 
 /** This replaces former multimedia item with ease of usage
@@ -41,9 +41,12 @@ class Constellation(): Building {
     }
 
 
-    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle) {
+    override fun draw(batch: SpriteBatch, drawData: DrawData, alpha:Float) {
         stars.sortedBy{ it.z }.forEach {
-            it.building.draw(batch,drawingRectangle.ratedCopy(it.rect))
+            val dd2 = DrawData(drawData.targetPunRectangle.getSubRectangle(it.rect),drawData.expandedFrame.getSubRectangle(it.rect),FastGeometry.unitSquare(),drawData.drawLimits)
+            if(dd2.toBeDrawn()){
+                it.building.draw(batch,dd2,alpha)
+            }
         }
     }
 

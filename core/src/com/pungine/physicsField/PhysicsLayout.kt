@@ -1,10 +1,11 @@
 package com.pungo.modules.physicsField
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
 import modules.simpleUi.Building
-import modules.uiPlots.DrawingRectangle
+import modules.uiPlots.DrawData
 
 open class PhysicsLayout(var id: String, r: Int, c: Int) : Building {
     val pf = PhysicsField(r, c)
@@ -33,7 +34,31 @@ open class PhysicsLayout(var id: String, r: Int, c: Int) : Building {
         pf.update()
     }
 
-    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle) {
+    override fun draw(batch: SpriteBatch, drawData: DrawData, alpha: Float) {
+        pf.items.forEach {
+            val e = it.elementPointer
+            if (e is Building) {
+                val width = it.pid.w/pf.colNo
+                val height = it.pid.h/pf.rowNo
+                val point = Point(it.pid.cX/pf.colNo,it.pid.cY/pf.rowNo)
+                val phRectangle = Rectangle(width,height,point)
+                val limited =  drawData.targetPxRectangle.getIntersection(drawData.drawLimits)
+                val dd2 = DrawData(drawData.targetPunRectangle.getSubRectangle(phRectangle),drawData.expandedFrame.getSubRectangle(phRectangle),
+                    FastGeometry.unitSquare(),limited)
+                if(dd2.toBeDrawn()){
+                    e.draw(batch,dd2,alpha)
+                    //tiles.first {it2-> it.id == it2.id }.db.draw(batch, dd2,alpha)
+                }
+                //val dr = drawingRectangle.ratedCopy(Rectangle(width,height,point))
+                //if(dr.toBeDrawn()){
+                //    e.draw(batch,dr,alpha)
+                //}
+            }
+        }
+    }
+
+    /*
+    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle, alpha: Float) {
         pf.items.forEach {
             val e = it.elementPointer
             if (e is Building) {
@@ -42,11 +67,13 @@ open class PhysicsLayout(var id: String, r: Int, c: Int) : Building {
                 val point = Point(it.pid.cX/pf.colNo,it.pid.cY/pf.rowNo)
                 val dr = drawingRectangle.ratedCopy(Rectangle(width,height,point))
                 if(dr.toBeDrawn()){
-                    e.draw(batch,dr)
+                    e.draw(batch,dr,alpha)
                 }
             }
         }
     }
+
+     */
 
     override fun hoverFunction(hovering: Boolean, relativePoint: Point?) {
         //TODO("Not yet implemented")

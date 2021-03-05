@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.Point
 import modules.simpleUi.DisplayBuilding
-import modules.uiPlots.DrawingRectangle
+import modules.uiPlots.DrawData
 import modules.visuals.FontGenerator
 
 open class TextBox: DisplayBuilding {
@@ -44,7 +44,7 @@ open class TextBox: DisplayBuilding {
     }
 
     private fun updateGlyph(baseWidth: Float, baseHeight: Float){
-        for (i in FontGenerator.getFontsBetween(minPunto..maxPunto,"fonts/PTMono-Regular.ttf").reversed()){
+        for (i in FontGenerator.getFontsBetween(minPunto..maxPunto,fontPath).reversed()){
             glyph = glyph.copy(i)
             if(glyph.targetHeight(baseWidth)<=baseHeight){
                 break
@@ -70,13 +70,14 @@ open class TextBox: DisplayBuilding {
     }
 
 
-    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle) {
-        if((glyph.targetHeight(drawingRectangle.baseWidth)>drawingRectangle.baseHeight)||(widthRecord!=drawingRectangle.baseWidth)){
-            widthRecord = drawingRectangle.baseWidth
-            updateGlyph(drawingRectangle.baseWidth,drawingRectangle.baseHeight)
+    override fun draw(batch: SpriteBatch, drawData: DrawData, alpha:Float) {
+        if((glyph.targetHeight(drawData.punWidth)>drawData.punHeight)||(widthRecord!=drawData.punWidth)){
+            widthRecord = drawData.punWidth
+            updateGlyph(drawData.punWidth,drawData.punHeight)
         }
         glyph.font.color = colour
-        glyph.draw(batch,drawingRectangle.croppedSegment, drawingRectangle.baseWidth)
+        val limited = drawData.targetPxRectangle.getIntersection(drawData.drawLimits)
+        glyph.draw(batch,limited, drawData.punWidth,alpha)
     }
 
     override fun hoverFunction(hovering: Boolean, relativePoint: Point?) {

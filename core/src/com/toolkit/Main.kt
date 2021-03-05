@@ -1,29 +1,21 @@
 package com.toolkit
 
-import com.badlogic.gdx.ApplicationAdapter
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
+import com.pungo.modules.inputProcessor.BasicListener
+import com.pungo.modules.inputProcessor.InputHandler
+import com.pungo.modules.scenes.LayerManager
+import modules.application.PungineAdapter
 
-class Main : ApplicationAdapter() {
-    var batch: SpriteBatch? = null
-    var img: Texture? = null
+class Main : PungineAdapter(){
     override fun create() {
-        batch = SpriteBatch()
-        img = Texture("badlogic.jpg")
+        super.create()
+        Gdx.input.inputProcessor = BasicListener()
+        LayerManager.scenesToAdd.add(Pair(EntryScene(),true))
+
     }
 
     override fun render() {
-        Gdx.gl.glClearColor(1f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
-        batch!!.begin()
-        batch!!.draw(img, 0f, 0f)
-        batch!!.end()
-    }
-
-    override fun dispose() {
-        batch!!.dispose()
-        img!!.dispose()
+        super.render()
+        InputHandler.afterUpdate()
     }
 }

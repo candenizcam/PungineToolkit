@@ -11,12 +11,7 @@ object TextureCache {
     private var textureList = mutableMapOf<FileHandle, Texture>()
     private var textureAtlasList = mutableMapOf<FileHandle, TextureAtlas>()
     private var jsonAtlasList = mutableMapOf<FileHandle, AnimateJson>()
-    private var pixmapTextures = mutableListOf<Texture>() //this is for disposing
 
-    fun addToPixmapTextures(t: Texture) {
-        t.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
-        pixmapTextures.add(t)
-    }
 
 
     fun jsonOpener(path: FileHandle, visualPath: FileHandle? = null, func: (String) -> Boolean = { true }): MutableList<Sprite> {
@@ -81,9 +76,6 @@ object TextureCache {
             it.value.textures.forEach { it2 ->
                 it2.dispose()
             }
-        }
-        pixmapTextures.forEach {
-            it.dispose()
         }
         jsonAtlasList.forEach {
             it.value.dispose()

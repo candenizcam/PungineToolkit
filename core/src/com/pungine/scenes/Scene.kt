@@ -7,7 +7,7 @@ import modules.uiPlots.SceneDistrict
 /** Scenes are used to arrange and use districts
  *
  */
-open class Scene(val id: String, var zOrder: Float,
+open class Scene(val id: String, var zOrder: Float=0f,
                  intendedWidth: Float=PuniversalValues.punWidth,
                  intendedHeight: Float = PuniversalValues.punHeight,
                  sceneScaling: SceneDistrict.ResizeReaction = SceneDistrict.ResizeReaction.STRETCH) {
