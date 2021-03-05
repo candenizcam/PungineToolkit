@@ -35,6 +35,7 @@ class ColouredMap: Scene("colouredMap") {
     var initialClick = Point(0f,0f)
     val gridRectangle =  Rectangle(0.15f,0.85f,0.05f,0.95f)
     var activeTile = "test"
+    var drawingStyle = DrawingStyle.PENCIL
 
     init {
 
@@ -109,6 +110,31 @@ class ColouredMap: Scene("colouredMap") {
             }
         }
 
+        mainDistrict.splitToPlots("drawing options",Rectangle(0.86f,0.99f,0.85f,0.95f),1,3).also {
+            it[0].element = SetButton(References.buttonTextBox("pencil",18),0.8f,0.8f).also {it2->
+                it2.inactive=true
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.PENCIL
+                }
+            }
+            it[1].element = SetButton(References.buttonTextBox("line",18),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.LINE
+                }
+            }
+            it[2].element = SetButton(References.buttonTextBox("area",18),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.AREA
+                }
+            }
+        }
+
 
 
 
@@ -139,37 +165,45 @@ class ColouredMap: Scene("colouredMap") {
     var initialBlock: Pair<Int, Int>? = null
     var blockList = mutableListOf<Pair<Int, Int>>()
     override fun update() {
-        //blockList.forEach { motherGrid.modifyGrid(null,it.first,it.second) }
         if(drawActive||eraserActive){
             tempGrid.clearGrid()
             val point = mainDistrict.getPunRatedPointOnPlot("tempGrid",PuniversalValues.cursorPoint,true)
             val row = ((1-point.y)*motherGrid.rows-0.0001f).toInt()+1
             val col = (point.x*motherGrid.cols-0.0001f).toInt()+1
             if(mainDistrict.findPlot("tempGrid").hovering){
-                if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-                    blockList.add(Pair(row,col))
-                }
-            }
-            if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)&&blockList.isNotEmpty()){
-                val initialBlock = blockList[0]
-                blockList = if(abs(row-initialBlock.first)>=abs(col-initialBlock.second)){
-                    if(row>initialBlock.first){
-                        (initialBlock.first..row).map { Pair(it,initialBlock.second) }
-                    }else{
-                        (row..initialBlock.first).map { Pair(it,initialBlock.second) }.reversed()
+                when(drawingStyle){
+                    DrawingStyle.PENCIL->{
+                        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
+                            val thing = if(drawActive) "test" else null
+                            motherGrid.modifyGrid(thing,row,col)
+                        }
                     }
-                }else{
-                    if(col>initialBlock.second){
-                        (initialBlock.second..col).map { Pair(initialBlock.first,it) }
-                    }else{
-                        (col..initialBlock.second).map { Pair(initialBlock.first,it) }.reversed()
-                    }
-                }.toMutableList()
+                    else->{
+                        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+                            blockList.add(Pair(row,col))
+                        }
 
-            }else{
-                val thing = if(drawActive) "test" else null
-                blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
-                blockList.clear()
+                        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)&&blockList.isNotEmpty()){
+                            val initialBlock = blockList[0]
+                            val rowRange = if(row>initialBlock.first){
+                                (initialBlock.first..row)
+                            }else{
+                                (row..initialBlock.first).reversed()
+                            }
+                            val colRange = if(col>initialBlock.second){
+                                (initialBlock.second..col)
+                            }else{
+                                (col..initialBlock.second).reversed()
+                            }
+                            blockList = drawingStyle.blockList(rowRange.toList(),colRange.toList())
+                        }else{
+                            val thing = if(drawActive) "test" else null
+                            blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
+                            blockList.clear()
+                        }
+
+                    }
+                }
             }
         }else{
             blockList.clear()
@@ -225,6 +259,36 @@ class ColouredMap: Scene("colouredMap") {
         }
         initialClick = FastGeometry.unitSquare().invertSubRectangle(grid.zoomRectangle).getNormalPoint(mainDistrict.getPunRatedPointOnPlot("grid",PuniversalValues.cursorPoint))
 
+    }
+
+    enum class DrawingStyle{
+        PENCIL {
+            override fun blockList(rowRange: List<Int>, colRange: List<Int>):  MutableList<Pair<Int, Int>> {
+                return mutableListOf<Pair<Int,Int>>()
+            }
+        },
+        LINE {
+            override fun blockList(rowRange: List<Int>, colRange: List<Int>):  MutableList<Pair<Int, Int>> {
+                return if(rowRange.size>=colRange.size){
+                    rowRange.map { Pair(it,colRange[0]) }
+                }else{
+                    colRange.map { Pair(rowRange[0],it) }
+                }.toMutableList()
+            }
+        },
+        AREA {
+            override fun blockList(rowRange: List<Int>, colRange: List<Int>): MutableList<Pair<Int, Int>> {
+                val toBeReturned = mutableListOf<Pair<Int,Int>>()
+                for (i in rowRange){
+                    for (j in colRange){
+                        toBeReturned.add(Pair(i,j))
+                    }
+                }
+                return toBeReturned
+            }
+        };
+
+        abstract fun blockList(rowRange: List<Int>, colRange: List<Int>): MutableList<Pair<Int, Int>>
     }
 
 

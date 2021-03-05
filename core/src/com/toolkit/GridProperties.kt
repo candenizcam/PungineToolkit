@@ -55,14 +55,14 @@ class GridProperties(motherGrid: TiledDisplay, val modifyFunction: (row: Int?,co
             it[starter2+2].element = SetButton(References.buttonTextBox("<<",36)).also { it2->
                 it2.clicked = {
                     modifyFunction(null,-5).also {it2->
-                        (it[starter2+4].element as TextBox).text = it2.first.toString()
+                        (it[starter2+4].element as TextBox).text = it2.second.toString()
                     }
                 }
             }
             it[starter2+3].element = SetButton(References.buttonTextBox("<",36)).also { it2->
                 it2.clicked = {
                     modifyFunction(null,-1).also {it2->
-                        (it[starter2+4].element as TextBox).text = it2.first.toString()
+                        (it[starter2+4].element as TextBox).text = it2.second.toString()
                     }
                 }
             }
@@ -70,14 +70,14 @@ class GridProperties(motherGrid: TiledDisplay, val modifyFunction: (row: Int?,co
             it[starter2+5].element = SetButton(References.buttonTextBox(">",36)).also { it2->
                 it2.clicked = {
                     modifyFunction(null,1).also {it2->
-                        (it[starter2+4].element as TextBox).text = it2.first.toString()
+                        (it[starter2+4].element as TextBox).text = it2.second.toString()
                     }
                 }
             }
             it[starter2+6].element = SetButton(References.buttonTextBox(">>",36)).also { it2->
                 it2.clicked = {
                     modifyFunction(null,5).also {it2->
-                        (it[starter2+4].element as TextBox).text = it2.first.toString()
+                        (it[starter2+4].element as TextBox).text = it2.second.toString()
                     }
                 }
             }
