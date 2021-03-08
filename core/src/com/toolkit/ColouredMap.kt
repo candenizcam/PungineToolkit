@@ -15,10 +15,6 @@ import modules.basic.Colours
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
-import modules.simpleUi.text.ColouredTextBox
-import modules.simpleUi.text.TextBox
-import org.w3c.dom.Text
-import kotlin.math.abs
 
 class ColouredMap: Scene("colouredMap") {
     val motherGrid = TiledDisplay(5,5).also {
@@ -156,7 +152,6 @@ class ColouredMap: Scene("colouredMap") {
             if(e is SetButton){
                 e.inactive = false
             }
-
         }
         mainDistrict.findPlot("gridProperties").visible=false
     }
@@ -165,6 +160,17 @@ class ColouredMap: Scene("colouredMap") {
     var initialBlock: Pair<Int, Int>? = null
     var blockList = mutableListOf<Pair<Int, Int>>()
     override fun update() {
+        drawingFunction()
+        rollFunction()
+        moveFunction(moveActive) //do not put it in an if, it needs to update initial click
+
+
+
+        mainDistrict.findPlot("cage").zoomRectangle = mainDistrict.findPlot("grid").zoomRectangle
+        super.update()
+    }
+
+    private fun drawingFunction(){
         if(drawActive||eraserActive){
             tempGrid.clearGrid()
             val point = mainDistrict.getPunRatedPointOnPlot("tempGrid",PuniversalValues.cursorPoint,true)
@@ -213,16 +219,6 @@ class ColouredMap: Scene("colouredMap") {
         }else if (eraserActive){
             blockList.forEach { tempGrid.modifyGrid("eraser",it.first,it.second) }
         }
-
-
-
-        rollFunction()
-        moveFunction(moveActive) //do not put it in an if, it needs to update initial click
-
-
-
-        mainDistrict.findPlot("cage").zoomRectangle = mainDistrict.findPlot("grid").zoomRectangle
-        super.update()
     }
 
     private fun rollFunction(){
