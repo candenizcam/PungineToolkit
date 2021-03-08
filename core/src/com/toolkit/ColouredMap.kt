@@ -104,6 +104,23 @@ class ColouredMap: Scene("colouredMap") {
                     eraserActive= true
                 }
             }
+
+            it[10].element = SetButton(References.buttonTextBox("save",24),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    deactivateAllButtons()
+                    // TODO SAVE FILE
+                    // motherGrid, save edilecek şey, bu classın fieldı, ordan aradığın yere gidip bakabilirsin, önceki grid sisteminden daha, zarif
+                    // ayrıca da gerekirse sor
+
+                }
+            }
+
+            it[11].element = SetButton(References.buttonTextBox("load",24),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    deactivateAllButtons()
+                    // TODO OPEN FILE
+                }
+            }
         }
 
         mainDistrict.splitToPlots("drawing options",Rectangle(0.86f,0.99f,0.85f,0.95f),1,3).also {
