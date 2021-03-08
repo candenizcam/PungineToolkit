@@ -10,11 +10,17 @@ import com.pungo.modules.inputProcessor.InputHandler
 import com.pungo.modules.scenes.LayerManager
 import com.pungo.modules.scenes.Scene
 import com.pungo.modules.visuals.PixmapGenerator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import modules.application.PuniversalValues
 import modules.basic.Colours
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
+import javax.swing.JFileChooser
+import javax.swing.JFrame
+import javax.swing.filechooser.FileNameExtensionFilter
 
 class ColouredMap: Scene("colouredMap") {
     val motherGrid = TiledDisplay(5,5).also {
@@ -108,6 +114,20 @@ class ColouredMap: Scene("colouredMap") {
             it[10].element = SetButton(References.buttonTextBox("save",24),0.8f,0.8f).also {it2->
                 it2.clicked = {
                     deactivateAllButtons()
+                    Gdx.app.postRunnable {
+                        val filechooser = JFileChooser()
+                        filechooser.currentDirectory = Gdx.files.local("/maps").file()
+                        filechooser.fileFilter = FileNameExtensionFilter("Map Files", "map")
+                        val f = JFrame()
+                        f.isVisible = true
+                        f.toFront()
+                        f.isVisible = false
+                        val res = filechooser.showSaveDialog(f)
+                        f.dispose()
+                        if (res == JFileChooser.APPROVE_OPTION) {
+                            saveMap(filechooser.selectedFile.nameWithoutExtension)
+                        }
+                    }
                     // TODO SAVE FILE
                     // motherGrid, save edilecek şey, bu classın fieldı, ordan aradığın yere gidip bakabilirsin, önceki grid sisteminden daha, zarif
                     // ayrıca da gerekirse sor
@@ -118,6 +138,20 @@ class ColouredMap: Scene("colouredMap") {
             it[11].element = SetButton(References.buttonTextBox("load",24),0.8f,0.8f).also {it2->
                 it2.clicked = {
                     deactivateAllButtons()
+                    Gdx.app.postRunnable {
+                        val filechooser = JFileChooser()
+                        filechooser.currentDirectory = Gdx.files.local("/maps").file()
+                        filechooser.fileFilter = FileNameExtensionFilter("Map Files", "map")
+                        val f = JFrame()
+                        f.isVisible = true
+                        f.toFront()
+                        f.isVisible = false
+                        val res = filechooser.showOpenDialog(f)
+                        f.dispose()
+                        if (res == JFileChooser.APPROVE_OPTION) {
+                            loadMap(filechooser.selectedFile.nameWithoutExtension)
+                        }
+                    }
                     // TODO OPEN FILE
                 }
             }
@@ -159,6 +193,21 @@ class ColouredMap: Scene("colouredMap") {
                 }
             }
         }
+    }
+
+    private fun saveMap(name: String){
+        val json = Json
+        val map = json.encodeToString<List<TiledDisplay.TileLocation>>(motherGrid.tileLocations)
+        val file = Gdx.files.local("maps/$name.map")
+        file.writeString(map, false)
+    }
+
+    private fun loadMap(name: String){
+        val json = Json
+        val file = Gdx.files.local("maps/$name.map")
+        val map = file.readString()
+        motherGrid.tileLocations.clear()
+        motherGrid.tileLocations.addAll(json.decodeFromString<List<TiledDisplay.TileLocation>>(map))
     }
 
     private fun deactivateAllButtons(){

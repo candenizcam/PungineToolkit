@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
+import kotlinx.serialization.Serializable
 import modules.uiPlots.DrawData
 
 class TiledDisplay(cols: Int, rows: Int) :Building {
@@ -98,5 +99,6 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
 
     class Tile(val id: String, val db: DisplayBuilding)
 
+    @Serializable
     data class TileLocation(val id : String, val row: Int, val col: Int)
 }
