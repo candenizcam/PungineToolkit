@@ -3,7 +3,7 @@ package com.toolkit
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.simpleUi.*
 import modules.simpleUi.text.TextBox
 import modules.uiPlots.DrawData
@@ -14,7 +14,7 @@ class GridProperties(motherGrid: TiledDisplay, val modifyFunction: (row: Int?,co
     init {
 
         district.splitToPlots("gridOptions",FastGeometry.unitSquare(),listOf(2f,1f,1f,1f,2f), listOf(1f,2f,1f,1f,1.5f,1f,1f,1f),true).also {
-            it[0].element = Displayer(Colours.byRGBA256(7,6,17,240))
+            it[0].element = Displayer(Colour.rgba256(7,6,17,240))
 
             val starter = 9
 

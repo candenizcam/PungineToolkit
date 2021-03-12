@@ -1,8 +1,8 @@
 package modules.simpleUi
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Sprite
+import modules.basic.Colour
 import kotlin.random.Random
 
 class ImageCollection {
@@ -21,21 +21,21 @@ class ImageCollection {
     var frameChanger = FrameChanger()
 
 
-    fun recolour(colour: Color, index: Int = -1){
+    fun recolour(colour: Colour, index: Int = -1){
         try {
             if(index==-1){
-                collection.forEach { it.color = colour }
+                collection.forEach { it.colour = colour }
             }else{
-                collection[index].color = colour
+                collection[index].colour = colour
             }
         }catch (e: Exception){
             println("index error in image collection recolour")
         }
     }
 
-    fun getColour(index: Int = 0): Color {
+    fun getColour(index: Int = 0): Colour {
         try {
-            return collection[index].color
+            return collection[index].colour.copy()
         }catch (e: Exception){
             println("index error in image collection getcolour")
             throw e

@@ -1,6 +1,6 @@
 package com.toolkit
 
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.simpleUi.text.ColouredTextBox
 import modules.simpleUi.text.PunGlyph
 import modules.simpleUi.text.TextBox
@@ -8,8 +8,9 @@ import modules.simpleUi.text.TextBox
 object References {
     val appWidth = 1280
     val appHeight = 720
-    val bgColour = Colours.byRGBA256(24,21,35)
-    val buttonBg = Colours.byRGBA256(34,31,45)
+    val bgColour = Colour.rgba256(24,21,35)
+    val buttonBg = Colour.rgba256(34,31,45)
+
 
 
     fun buttonTextBox(text: String, maxPunto: Int=36): ColouredTextBox {

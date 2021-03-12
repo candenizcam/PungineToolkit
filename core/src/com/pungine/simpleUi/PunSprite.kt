@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.pungo.modules.basic.geometry.Rectangle
+import modules.basic.Colour
 import modules.visuals.PuxMap
 import modules.visuals.TextureCache
 
@@ -26,6 +27,12 @@ class PunSprite: Sprite {
         originalWidth = texture.width.toFloat()
         originalHeight = texture.height.toFloat()
     }
+
+    var colour: Colour = Colour.BLACK
+        set(value) {
+            field=value
+            color = value.libgdxColor
+        }
 
     var originalWidth: Float = 0f
         private set

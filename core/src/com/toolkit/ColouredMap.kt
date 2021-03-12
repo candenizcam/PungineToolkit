@@ -11,18 +11,19 @@ import com.pungo.modules.scenes.LayerManager
 import com.pungo.modules.scenes.Scene
 import com.pungo.modules.visuals.PixmapGenerator
 import modules.application.PuniversalValues
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
+import modules.uiPlots.SceneDistrict
 
-class ColouredMap: Scene("colouredMap") {
+class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReaction.RATED) {
     val motherGrid = TiledDisplay(5,5).also {
-        it.modifyTile("test",Displayer(Color.RED))
+        it.modifyTile("test",Displayer(Colour.RED))
     }
     val tempGrid = TiledDisplay(5,5,).also {
-        it.modifyTile("test",Displayer(Color.RED))
-        it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
+        it.modifyTile("test",Displayer(Colour.RED))
+        it.modifyTile("eraser",Displayer(Colour.rgba256(150,150,150,100)))
     }
     var moveActive = false
     var drawActive = false
@@ -37,12 +38,12 @@ class ColouredMap: Scene("colouredMap") {
 
 
         mainDistrict.addFullPlot("bg").also {
-            it.element = Displayer(Colours.byRGBA256(24,21,35))
+            it.element = Displayer(Colour.rgba256(24,21,35))
         }
 
 
         mainDistrict.addFullPlot("gridbg",gridRectangle).also {
-            it.element = Displayer(Colours.byRGBA256(64,61,75))
+            it.element = Displayer(Colour.rgba256(64,61,75))
         }
 
         mainDistrict.addFullPlot("grid",gridRectangle).also {
@@ -72,6 +73,79 @@ class ColouredMap: Scene("colouredMap") {
             }
         }
 
+        mainDistrict.addFullPlot("colourEditor",gridRectangle).also {
+            it.visible = false
+            it.touchStopper = false
+            it.element = ColourEditor()
+        }
+
+
+
+        mainDistrict.splitToPlots("drawing options",Rectangle(0.86f,0.99f,0.85f,0.95f),1,3).also {
+            it[0].element = SetButton(References.buttonTextBox("pencil",18),0.8f,0.8f).also {it2->
+                it2.inactive=true
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.PENCIL
+                }
+            }
+            it[1].element = SetButton(References.buttonTextBox("line",18),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.LINE
+                }
+            }
+            it[2].element = SetButton(References.buttonTextBox("area",18),0.8f,0.8f).also {it2->
+                it2.clicked = {
+                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
+                    it2.inactive = true
+                    drawingStyle = DrawingStyle.AREA
+                }
+            }
+        }
+
+        mainDistrict.addFullPlot("colourPicker",Rectangle(0.86f,0.99f,0.40f,0.73f)).also {
+            it.element = ColourPicker(PuniversalValues.appWidth*0.13f,PuniversalValues.appHeight*0.33f){
+                val p = mainDistrict.findPlot("colourEditor")
+                p.visible = !p.visible
+            }
+        }
+
+        /*
+        mainDistrict.splitToPlots("colourGridPick",Rectangle(0.86f,0.99f,0.75f,0.80f),cols=listOf(1f,2f,1f)).also {
+            for(i in 0..2){
+                it[i].element = Displayer(Colours.byHSV(i/3f,1f,1f))
+            }
+        }
+
+        val heightDiff = PuniversalValues.appWidth*0.13f/PuniversalValues.appHeight
+
+        mainDistrict.splitToPlots("colourGrid", Rectangle(0.86f,0.99f,0.70f-heightDiff,0.70f),3,3).also {
+            for(i in 0..8){
+                it[i].element = Displayer(Colours.byHSV(i/9f,1f,1f))
+            }
+        }
+
+         */
+
+        toolsButtons()
+
+
+
+
+        mainDistrict.addFullPlot("exitButton", Rectangle(0.01f,0.14f,0.05f,0.1f)).also {
+            it.element = SetButton(References.buttonTextBox("back")).also {
+                it.clicked = {
+                    LayerManager.scenesToRemove.add(this)
+                    LayerManager.scenesToAdd.add(Pair(EntryScene(),true))
+                }
+            }
+        }
+    }
+
+    private fun toolsButtons(){
         mainDistrict.splitToPlots("tools",Rectangle(0.01f,0.14f,0.15f,0.95f),6,2).also {
             it[0].element = SetButton(References.buttonTextBox("move",24),0.8f,0.8f).also {it2->
                 it2.clicked = {
@@ -122,48 +196,12 @@ class ColouredMap: Scene("colouredMap") {
                 }
             }
         }
-
-        mainDistrict.splitToPlots("drawing options",Rectangle(0.86f,0.99f,0.85f,0.95f),1,3).also {
-            it[0].element = SetButton(References.buttonTextBox("pencil",18),0.8f,0.8f).also {it2->
-                it2.inactive=true
-                it2.clicked = {
-                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
-                    it2.inactive = true
-                    drawingStyle = DrawingStyle.PENCIL
-                }
-            }
-            it[1].element = SetButton(References.buttonTextBox("line",18),0.8f,0.8f).also {it2->
-                it2.clicked = {
-                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
-                    it2.inactive = true
-                    drawingStyle = DrawingStyle.LINE
-                }
-            }
-            it[2].element = SetButton(References.buttonTextBox("area",18),0.8f,0.8f).also {it2->
-                it2.clicked = {
-                    it.forEach { it3-> (it3.element as SetButton).inactive = false }
-                    it2.inactive = true
-                    drawingStyle = DrawingStyle.AREA
-                }
-            }
-        }
-
-
-
-
-        mainDistrict.addFullPlot("exitButton", Rectangle(0.01f,0.14f,0.05f,0.1f)).also {
-            it.element = SetButton(References.buttonTextBox("back")).also {
-                it.clicked = {
-                    LayerManager.scenesToRemove.add(this)
-                    LayerManager.scenesToAdd.add(Pair(EntryScene(),true))
-                }
-            }
-        }
     }
 
     private fun deactivateAllButtons(){
         moveActive = false
         drawActive = false
+        eraserActive = false
         mainDistrict.findPlots("tools").forEach {
             val e = it.element
             if(e is SetButton){

@@ -6,8 +6,9 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.scenes.LayerManager
+import modules.basic.Colour
 
-open class PungineAdapter(var bgColor: Color = Color(0f,0f,0f,1f)): ApplicationAdapter() {
+open class PungineAdapter(var bgColor: Colour = Colour.rgba(1f,0f,0f,1f)): ApplicationAdapter() {
     lateinit var batch: SpriteBatch
     var currentPixelWidth = 0
     var currentPixelHeight = 0

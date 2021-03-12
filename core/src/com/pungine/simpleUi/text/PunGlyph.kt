@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
+import modules.basic.Colour
 
 
 class PunGlyph: GlyphLayout {
@@ -25,6 +26,7 @@ class PunGlyph: GlyphLayout {
     lateinit var font: BitmapFont
     var text = "Pungine is the best engine in the world"
     var textAlignment = TextAlignment.CENTRE
+
 
     /** This is a pixel value input, for finding the appropriate glyph
      */
@@ -110,52 +112,3 @@ class PunGlyph: GlyphLayout {
 
 }
 
-
-/*
-    fun getLastX(rectangle: Rectangle,intendedWidth: Float, lastLine: String): Float{
-        text = lastLine
-        var initHeight = targetHeight(intendedWidth)
-        var lineWidth = intendedWidth
-        if(lastLine.length!=0){
-            for (i in 1 until intendedWidth.toInt()){
-                val th = targetHeight(intendedWidth-i)
-                if(th>initHeight){
-                    break
-                }else{
-                    lineWidth = intendedWidth-i
-                }
-            }
-        }else{
-            lineWidth=0f
-        }
-
-        return when(textAlignment.getHAlign()){
-            -1->{ //left
-                rectangle.left+lineWidth
-            }
-            0->{ //right
-                rectangle.right
-            }
-            1 ->{ //centre
-                rectangle.centre.x+lineWidth/2
-            }else->{
-                0f
-            }
-        }
-    }
-
-    fun getLastLine(recordText: String, intendedWidth: Float): String {
-        var initialIndex = 0
-        var initialHeight = 0f
-        for (i in 1 until recordText.length){
-            text = recordText.subSequence(0,i).toString()
-            val h= targetHeight(intendedWidth)
-            if(h>initialHeight){
-                initialIndex = i-1
-                initialHeight = h
-            }
-        }
-        return recordText.subSequence(initialIndex,recordText.lastIndex).toString()
-    }
-
-     */

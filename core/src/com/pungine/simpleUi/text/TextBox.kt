@@ -3,12 +3,13 @@ package modules.simpleUi.text
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.Point
+import modules.basic.Colour
 import modules.simpleUi.DisplayBuilding
 import modules.uiPlots.DrawData
 import modules.visuals.FontGenerator
 
 open class TextBox: DisplayBuilding {
-    constructor(text: String, fontPath: String, alignment: PunGlyph.TextAlignment = PunGlyph.TextAlignment.CENTRE, maxPunto: Int? = null, minPunto: Int? = null, colour: Color = Color.WHITE){
+    constructor(text: String, fontPath: String, alignment: PunGlyph.TextAlignment = PunGlyph.TextAlignment.CENTRE, maxPunto: Int? = null, minPunto: Int? = null, colour: Colour = Colour.WHITE){
         this.minPunto = minPunto?:this.minPunto
         this.maxPunto = maxPunto?:this.maxPunto
         glyph = PunGlyph(FontGenerator.getFont(fontPath,activePunto),text)
@@ -17,6 +18,8 @@ open class TextBox: DisplayBuilding {
         this.colour = colour
         this.fontPath = fontPath
     }
+
+    constructor(textBox: TextBox): this(textBox.text,textBox.fontPath,textBox.glyph.textAlignment,textBox.maxPunto,textBox.minPunto,textBox.colour)
 
 
     var text : String
@@ -31,8 +34,8 @@ open class TextBox: DisplayBuilding {
     protected  var minPunto = FontGenerator.frequentPuntoList.first()
     protected  var maxPunto = FontGenerator.frequentPuntoList.last()
     private var widthRecord = 0f
-    private var colour: Color
-    override fun getColour(): Color {
+    private var colour: Colour
+    override fun getColour(): Colour {
         return colour
     }
 
@@ -56,7 +59,7 @@ open class TextBox: DisplayBuilding {
     //    TODO("Not yet implemented")
     //}
 
-    override fun recolour(c: Color) {
+    override fun recolour(c: Colour) {
         colour = c
     }
 
@@ -75,7 +78,7 @@ open class TextBox: DisplayBuilding {
             widthRecord = drawData.punWidth
             updateGlyph(drawData.punWidth,drawData.punHeight)
         }
-        glyph.font.color = colour
+        glyph.font.color = colour.libgdxColor
         val limited = drawData.targetPxRectangle.getIntersection(drawData.drawLimits)
         glyph.draw(batch,limited, drawData.punWidth,alpha)
     }

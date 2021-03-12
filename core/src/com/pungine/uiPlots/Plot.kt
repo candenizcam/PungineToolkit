@@ -36,7 +36,7 @@ open class Plot(val id: String, var estate: Rectangle = FastGeometry.unitSquare(
                 val top = estate.top - estate.height / r * (ri + 1)
                 val bottom = estate.top - estate.height / r * (ri)
                 val rect = Rectangle(left, right, top, bottom)
-                val plot = Plot("${tag}_r${r - ri - 1}_c${c - ci - 1}", rect, z + 1)
+                val plot = Plot("${tag}_r${ri+1}_c${ci+1}", rect, z + 1)
                 returning.add(plot)
             }
         }

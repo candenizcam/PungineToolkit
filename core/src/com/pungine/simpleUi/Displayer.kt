@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.visuals.PixmapGenerator
+import modules.basic.Colour
 import modules.uiPlots.DrawData
 import modules.visuals.PuxMap
 import modules.visuals.TextureCache
@@ -30,46 +31,30 @@ class Displayer: DisplayBuilding {
         })
     }
 
-    constructor(colour: Color){
+    constructor(colour: Colour){
         imageCollection.add(PunSprite(PixmapGenerator.singleColour()).also {
-            it.color = colour
+            it.colour = colour
         })
     }
 
     var imageCollection = ImageCollection()
 
 
-    override fun getColour(): Color {
+    override fun getColour(): Colour {
         return imageCollection.getColour()
     }
 
-    override fun recolour(c: Color) {
+    override fun recolour(c: Colour) {
         imageCollection.recolour(c)
     }
 
-    fun recolour(c: Color, index: Int){
+    fun recolour(c: Colour, index: Int){
         imageCollection.recolour(c,index)
     }
 
     override fun update() {
         imageCollection.update()
     }
-
-
-
-    /*
-    override fun draw(batch: SpriteBatch, drawingRectangle: DrawingRectangle, alpha:Float) {
-        imageCollection.yieldImage()?.also {
-            it.setRectangle(drawingRectangle.croppedSegment)
-            it.u = drawingRectangle.u1
-            it.u2 = drawingRectangle.u2
-            it.v = drawingRectangle.v1
-            it.v2 = drawingRectangle.v2
-            it.draw(batch,alpha)
-        }
-    }
-
-     */
 
     override fun draw(batch: SpriteBatch, drawData: DrawData, alpha: Float) {
         imageCollection.yieldImage()?.also {

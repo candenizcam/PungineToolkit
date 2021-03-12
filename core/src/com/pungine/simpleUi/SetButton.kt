@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.simpleUi.text.ColouredTextBox
 import modules.uiPlots.DrawData
 
@@ -14,10 +14,10 @@ class SetButton: Building {
         buttonVisuals.add(ButtonVisuals(ButtonId.UP,upDisplayer,upRectangle))
         buttonVisuals.add(ButtonVisuals(ButtonId.DOWN,downDisplayer?:upDisplayer.copy().also {
             val c = upDisplayer.getColour()
-            it.recolour(Colours.byRGB(c.r*0.5f,c.g*0.5f,c.b*0.5f))
+            it.recolour(Colour.rgba(c.r*0.5f,c.g*0.5f,c.b*0.5f))
             if(it is ColouredTextBox){
                 val baseColour = it.getBgColour()
-                it.bgRecolour(Colours.byRGB(baseColour.r*0.5f,baseColour.g*0.5f,baseColour.b*0.5f))
+                it.bgRecolour(Colour.rgba(baseColour.r*0.5f,baseColour.g*0.5f,baseColour.b*0.5f))
             }
                                                                                              },downRectangle))
 
@@ -27,32 +27,32 @@ class SetButton: Building {
         val baseColour = visual.getColour()
         buttonVisuals.add(ButtonVisuals(ButtonId.UP,visual,rectangle))
         val offVisual = visual.copy().also {
-            it.recolour(Colours.byRGB(baseColour.r*offRatio,baseColour.g*offRatio,baseColour.b*offRatio))
+            it.recolour(Colour.rgba(baseColour.r*offRatio,baseColour.g*offRatio,baseColour.b*offRatio))
             if(it is ColouredTextBox){
                 val baseColour = it.getBgColour()
-                it.bgRecolour(Colours.byRGB(baseColour.r*offRatio,baseColour.g*offRatio,baseColour.b*offRatio))
+                it.bgRecolour(Colour.rgba(baseColour.r*offRatio,baseColour.g*offRatio,baseColour.b*offRatio))
             }
         }
         buttonVisuals.add(ButtonVisuals(ButtonId.DOWN,offVisual,rectangle))
 
         if(inactiveRatio!=null){
-            val inactiveColour = Colours.byRGB(baseColour.r*inactiveRatio,baseColour.g*inactiveRatio,baseColour.b*inactiveRatio)
+            val inactiveColour = Colour.rgba(baseColour.r*inactiveRatio,baseColour.g*inactiveRatio,baseColour.b*inactiveRatio)
             buttonVisuals.add(ButtonVisuals(ButtonId.INACTIVE,visual.copy().also {
                 it.recolour(inactiveColour)
                 if(it is ColouredTextBox){
                     val baseColour = it.getBgColour()
-                    it.bgRecolour(Colours.byRGB(baseColour.r*inactiveRatio,baseColour.g*inactiveRatio,baseColour.b*inactiveRatio))
+                    it.bgRecolour(Colour.rgba(baseColour.r*inactiveRatio,baseColour.g*inactiveRatio,baseColour.b*inactiveRatio))
                 }
                                                                                  },rectangle))
 
         }
         if(hoverRatio!=null){
-            val hoverColour = Colours.byRGB(baseColour.r*hoverRatio,baseColour.g*hoverRatio,baseColour.b*hoverRatio)
+            val hoverColour = Colour.rgba(baseColour.r*hoverRatio,baseColour.g*hoverRatio,baseColour.b*hoverRatio)
             buttonVisuals.add(ButtonVisuals(ButtonId.HOVER,visual.copy().also {
                 it.recolour(hoverColour)
                 if(it is ColouredTextBox){
                     val baseColour = it.getBgColour()
-                    it.bgRecolour(Colours.byRGB(baseColour.r*hoverRatio,baseColour.g*offRatio,hoverColour.b*hoverRatio))
+                    it.bgRecolour(Colour.rgba(baseColour.r*hoverRatio,baseColour.g*offRatio,hoverColour.b*hoverRatio))
                 }
 
                                                                               },rectangle))

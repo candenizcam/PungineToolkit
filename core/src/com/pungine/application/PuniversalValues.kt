@@ -36,6 +36,7 @@ object PuniversalValues {
         get() {
             return Point(appWidth/2f, appHeight/2f)
         }
+    var doubleClickTime = 0.2f
 
 
 

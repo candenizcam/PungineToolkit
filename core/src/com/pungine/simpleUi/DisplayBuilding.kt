@@ -1,11 +1,11 @@
 package modules.simpleUi
 
-import com.badlogic.gdx.graphics.Color
-import java.awt.Rectangle
+
+import modules.basic.Colour
 
 interface DisplayBuilding: Building {
-    fun getColour(): Color
-    fun recolour(c: Color)
+    fun getColour(): Colour
+    fun recolour(c: Colour)
     fun copy(): DisplayBuilding
 
 }
