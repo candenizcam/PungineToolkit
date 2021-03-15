@@ -24,11 +24,16 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 class ColouredMap: Scene("colouredMap") {
     val motherGrid = TiledDisplay(5,5).also {
-        it.modifyTile("test",Displayer(Color.RED))
+        //it.modifyTile("test",Displayer(Color.RED))
+        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        it.tileDataToTile()
     }
     val tempGrid = TiledDisplay(5,5,).also {
-        it.modifyTile("test",Displayer(Color.RED))
-        it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
+        //it.modifyTile("test",Displayer(Color.RED))
+        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        it.tileData.add(TiledDisplay.TileData("eraser",TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        //it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
+        it.tileDataToTile()
     }
     var moveActive = false
     var drawActive = false
@@ -128,10 +133,6 @@ class ColouredMap: Scene("colouredMap") {
                             saveMap(filechooser.selectedFile.nameWithoutExtension)
                         }
                     }
-                    // TODO SAVE FILE
-                    // motherGrid, save edilecek şey, bu classın fieldı, ordan aradığın yere gidip bakabilirsin, önceki grid sisteminden daha, zarif
-                    // ayrıca da gerekirse sor
-
                 }
             }
 
@@ -152,7 +153,6 @@ class ColouredMap: Scene("colouredMap") {
                             loadMap(filechooser.selectedFile.nameWithoutExtension)
                         }
                     }
-                    // TODO OPEN FILE
                 }
             }
         }
@@ -198,16 +198,24 @@ class ColouredMap: Scene("colouredMap") {
     private fun saveMap(name: String){
         val json = Json
         val map = json.encodeToString<List<TiledDisplay.TileLocation>>(motherGrid.tileLocations)
-        val file = Gdx.files.local("maps/$name.map")
+        val tiles = json.encodeToString<List<TiledDisplay.TileData>>(motherGrid.tileData)
+        val file = Gdx.files.local("maps/$name/$name.map")
+        val tilefile = Gdx.files.local("maps/$name/$name.tiles")
         file.writeString(map, false)
+        tilefile.writeString(tiles, false)
     }
 
     private fun loadMap(name: String){
         val json = Json
-        val file = Gdx.files.local("maps/$name.map")
+        val file = Gdx.files.local("maps/$name/$name.map")
+        val tilefile = Gdx.files.local("maps/$name/$name.tiles")
         val map = file.readString()
+        val tileData = tilefile.readString()
         motherGrid.tileLocations.clear()
         motherGrid.tileLocations.addAll(json.decodeFromString<List<TiledDisplay.TileLocation>>(map))
+        motherGrid.tiles.clear()
+        motherGrid.tileData.addAll(json.decodeFromString<List<TiledDisplay.TileData>>(tileData))
+        motherGrid.tileDataToTile()
     }
 
     private fun deactivateAllButtons(){

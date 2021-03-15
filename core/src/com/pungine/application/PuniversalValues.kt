@@ -36,8 +36,4 @@ object PuniversalValues {
         get() {
             return Point(appWidth/2f, appHeight/2f)
         }
-
-
-
-
 }

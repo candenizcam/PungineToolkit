@@ -1,10 +1,12 @@
 package modules.simpleUi
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
 import kotlinx.serialization.Serializable
+import modules.basic.Colours
 import modules.uiPlots.DrawData
 
 class TiledDisplay(cols: Int, rows: Int) :Building {
@@ -19,8 +21,8 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
             tileLocations.removeIf { it.row>field }
         }
 
-
     val tiles = mutableListOf<Tile>()
+    val tileData = mutableListOf<TileData>()
     val tileLocations = mutableListOf<TileLocation>()
 
     /** This is the access function for modifying rows and cols
@@ -97,8 +99,52 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
         //TODO("Not yet implemented")
     }
 
+    fun tileDataToTile() {
+        tiles.clear()
+        tileData.forEach {
+            // convert tileData to tile
+            // add it to tiles list
+            val db : DisplayBuilding = when(it.mode) {
+                BrushTypes.PIXMAP -> {
+                    Displayer(Colours.byRGBA256(it.cr, it.cg, it.cb, it.ca))
+                }
+                BrushTypes.SINGLETEXTURE -> {
+                    Displayer(Colours.byRGBA256(0,150,150,100))
+                }
+                BrushTypes.MULTITEXTURE -> {
+                    Displayer(Colours.byRGBA256(150,0,150,100))
+                }
+                BrushTypes.ANIMATION -> {
+                    Displayer(Colours.byRGBA256(150,150,0,100))
+                }
+            }
+            tiles.add(Tile(it.id, db))
+        }
+    }
+
     class Tile(val id: String, val db: DisplayBuilding)
+
+    /*
+        cr = pixmap colour red
+        cg = pixmap colour green
+        cb = pixmap colour blue
+        ca = pixmap colour alpha
+
+        further properties will be added to this list
+
+        maybe add mode property to tile as well?
+     */
+
+    @Serializable
+    open class TileData(open val id: String, val mode: BrushTypes, val cr: Int, val cg: Int, val cb: Int, val ca: Int)
 
     @Serializable
     data class TileLocation(val id : String, val row: Int, val col: Int)
+
+    enum class BrushTypes {
+        PIXMAP, // Colour
+        SINGLETEXTURE, // image from file
+        MULTITEXTURE, // ?
+        ANIMATION // animation from json
+    }
 }
