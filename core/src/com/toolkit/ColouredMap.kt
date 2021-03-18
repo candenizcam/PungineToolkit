@@ -121,7 +121,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
 
         mainDistrict.addFullPlot("colourPicker",Rectangle(0.86f,0.99f,0.40f,0.73f)).also {
             it.element = ColourPicker(PuniversalValues.appWidth*0.13f,PuniversalValues.appHeight*0.33f,motherGrid){
-
+                deactivateAllButtons()
                 val p = mainDistrict.findPlot("colourEditor")
                 p.visible = if(p.visible){
                     false
