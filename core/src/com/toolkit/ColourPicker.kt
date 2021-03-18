@@ -3,15 +3,17 @@ package com.toolkit
 
 import com.pungo.modules.basic.geometry.Rectangle
 import modules.basic.Colour
-import modules.simpleUi.Campus
-import modules.simpleUi.Displayer
-import modules.simpleUi.SetButton
+import modules.simpleUi.*
+import java.lang.Exception
 
-class ColourPicker(punWidth: Float, punHeight: Float, editButtonFunction: ()->Unit): Campus() {
+class ColourPicker(punWidth: Float, punHeight: Float, motherGrid: TiledDisplay, editButtonFunction: ()->Unit): Campus() {
+    var selectedIndex = 0
+    var page = 0
+
+    val motherGrid = motherGrid
+
+
     init {
-
-
-
         district.splitToPlots("gridBottom",Rectangle(0f,1f,punWidth/punHeight,0f),3,3).also {
             for(i in 0..8){
                 it[i].element = SetButton(Displayer(Colour.rgba256(0,0,0,50)),Displayer(Colour.GREEN)).also {
@@ -21,6 +23,7 @@ class ColourPicker(punWidth: Float, punHeight: Float, editButtonFunction: ()->Un
                             (it.element as SetButton).inactive = false
                         }
                         it.inactive=true
+                        selectedIndex = i
                     }
                 }
             }
@@ -30,7 +33,7 @@ class ColourPicker(punWidth: Float, punHeight: Float, editButtonFunction: ()->Un
             for(i in 0..8){
                 it[i].touchStopper = false
                 it[i].estate = it[i].estate.getSubRectangle(Rectangle(0.1f,0.9f,0.1f,0.9f))
-                it[i].element = Displayer(Colour.RED)
+                //it[i].element = Displayer(Colour.RED)
             }
         }
 
@@ -40,18 +43,46 @@ class ColourPicker(punWidth: Float, punHeight: Float, editButtonFunction: ()->Un
                 it.clicked = editButtonFunction
             }
             it[2].element = SetButton(References.buttonTextBox(">",24))
-            //for(i in 0..2){
-            //    it[i].element = Displayer(Colours.byHSV(i/3f,1f,1f,0.5f))
-            //}
         }
 
-        /*
-        district.splitToPlots("grid",Rectangle(0f,1f,punHeight/punWidth,0f),3,3).also {
-            for(i in 0..8){
-                it[i].element = Displayer(Colours.byHSV(i/9f,1f,1f))
+    }
+
+    val selectedColour: Colour
+        get() {
+            return getGridPair(selectedIndex)
+        }
+
+
+    override fun update() {
+        val gridTopList = district.findPlots("gridTop")
+        for(i in 0..8){
+            if(i<motherGrid.tiles.size){
+                gridTopList[i].element = motherGrid.tiles[i].db.copy()
+            }else{
+                gridTopList[i].element = null
             }
         }
-
-         */
+        super.update()
     }
+
+    val selectedTile: TiledDisplay.Tile?
+        get() {
+            try{
+                return motherGrid.tiles[selectedIndex+page*9]
+            }catch (e: Exception){
+                return null
+            }
+
+        }
+
+    fun getGridPair(n: Int): Colour {
+        try {
+            return (district.findPlots("gridTop")[n].element as DisplayBuilding).getColour()
+        }catch (e: Exception){
+            return Colour.BLACK
+        }
+
+    }
+
+
 }

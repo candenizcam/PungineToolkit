@@ -107,34 +107,24 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
         }
 
         mainDistrict.addFullPlot("colourPicker",Rectangle(0.86f,0.99f,0.40f,0.73f)).also {
-            it.element = ColourPicker(PuniversalValues.appWidth*0.13f,PuniversalValues.appHeight*0.33f){
+            it.element = ColourPicker(PuniversalValues.appWidth*0.13f,PuniversalValues.appHeight*0.33f,motherGrid){
+
                 val p = mainDistrict.findPlot("colourEditor")
-                p.visible = !p.visible
+                p.visible = if(p.visible){
+                    false
+                }else{
+                    val st = (mainDistrict.findPlot("colourPicker").element as ColourPicker).selectedTile
+                    if(st!=null){
+                        (p.element as ColourEditor).activate(st.id,st.db.getColour())
+                    }else{
+                        (p.element as ColourEditor).activate(null,Colour.BLACK)
+                    }
+                    true
+                }
             }
         }
-
-        /*
-        mainDistrict.splitToPlots("colourGridPick",Rectangle(0.86f,0.99f,0.75f,0.80f),cols=listOf(1f,2f,1f)).also {
-            for(i in 0..2){
-                it[i].element = Displayer(Colours.byHSV(i/3f,1f,1f))
-            }
-        }
-
-        val heightDiff = PuniversalValues.appWidth*0.13f/PuniversalValues.appHeight
-
-        mainDistrict.splitToPlots("colourGrid", Rectangle(0.86f,0.99f,0.70f-heightDiff,0.70f),3,3).also {
-            for(i in 0..8){
-                it[i].element = Displayer(Colours.byHSV(i/9f,1f,1f))
-            }
-        }
-
-         */
 
         toolsButtons()
-
-
-
-
         mainDistrict.addFullPlot("exitButton", Rectangle(0.01f,0.14f,0.05f,0.1f)).also {
             it.element = SetButton(References.buttonTextBox("back")).also {
                 it.clicked = {
@@ -214,10 +204,24 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
 
     var initialBlock: Pair<Int, Int>? = null
     var blockList = mutableListOf<Pair<Int, Int>>()
+
     override fun update() {
         drawingFunction()
         rollFunction()
         moveFunction(moveActive) //do not put it in an if, it needs to update initial click
+        val ce = (mainDistrict.findPlot("colourEditor").element as ColourEditor)
+        if(ce.isRecordClicked()){
+            mainDistrict.findPlot("colourEditor").visible = false
+            val p = ce.getRecording()
+            if(p.first!=null){
+                val d = if(p.second==null){
+                    null
+                }else{
+                    Displayer(p.second!!)
+                }
+                motherGrid.modifyTile(p.first!!,d)
+            }
+        }
 
 
 
@@ -226,6 +230,8 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
     }
 
     private fun drawingFunction(){
+        val st = (mainDistrict.findPlot("colourPicker").element as ColourPicker).selectedTile
+
         if(drawActive||eraserActive){
             tempGrid.clearGrid()
             val point = mainDistrict.getPunRatedPointOnPlot("tempGrid",PuniversalValues.cursorPoint,true)
@@ -235,7 +241,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                 when(drawingStyle){
                     DrawingStyle.PENCIL->{
                         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-                            val thing = if(drawActive) "test" else null
+                            val thing = if(drawActive&&(st!=null)) st.id else null
                             motherGrid.modifyGrid(thing,row,col)
                         }
                     }
@@ -258,7 +264,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                             }
                             blockList = drawingStyle.blockList(rowRange.toList(),colRange.toList())
                         }else{
-                            val thing = if(drawActive) "test" else null
+                            val thing = if(drawActive&&(st!=null)) st.id else null
                             blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
                             blockList.clear()
                         }
@@ -269,8 +275,10 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
         }else{
             blockList.clear()
         }
-        if(drawActive){
-            blockList.forEach { tempGrid.modifyGrid(activeTile,it.first,it.second) }
+
+
+        if(drawActive&&(st!=null)){
+            blockList.forEach { tempGrid.modifyGrid(st.id,it.first,it.second) }
         }else if (eraserActive){
             blockList.forEach { tempGrid.modifyGrid("eraser",it.first,it.second) }
         }

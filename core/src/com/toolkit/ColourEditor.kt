@@ -13,6 +13,9 @@ import modules.simpleUi.text.TextEditor
 class ColourEditor(name: String="type here"): Campus() {
     var visual = Displayer(Colour.BLACK)
     var activeColourSystem = ActiveColourSystem.RGB
+    var recordClicked = false
+    private var recordPair: Pair <String?, Colour?> = Pair(null,null)
+    private val nameEditor = TextEditor(References.textBox(name))
 
     init {
         district.addFullPlot("bg").also {
@@ -22,7 +25,7 @@ class ColourEditor(name: String="type here"): Campus() {
 
         district.splitToPlots("items", Rectangle(0.1f,0.9f,0.8f,0.9f),col=2).also {
             it[0].element = References.textBox("name:")
-            it[1].element = TextEditor(References.textBox(name))
+            it[1].element = nameEditor
         }
 
 
@@ -68,14 +71,30 @@ class ColourEditor(name: String="type here"): Campus() {
         }
 
         district.addFullPlot("record", Rectangle(0.1f,0.3f,0.1f,0.2f)).also {
-            it.element = SetButton(References.buttonTextBox("record"),0.7f,0.1f)
+            it.element = SetButton(References.buttonTextBox("record"),0.7f,0.1f).also {
+                it.clicked = {
+                    recordClicked = true
+                    recordPair = Pair(nameEditor.text,visual.getColour())
+                }
+            }
         }
 
         district.addFullPlot("delete",Rectangle(0.7f,0.9f,0.1f,0.2f)).also {
-            it.element = SetButton(References.buttonTextBox("delete"),0.7f,0.1f)
+            it.element = SetButton(References.buttonTextBox("delete"),0.7f,0.1f).also {
+                it.clicked = {
+                    recordClicked = true
+                    recordPair = Pair(nameEditor.text,null)
+                }
+            }
         }
 
         activateColourSystem(activeColourSystem.toString())
+    }
+
+    fun isRecordClicked(): Boolean {
+        return recordClicked.also {
+            recordClicked = false
+        }
     }
 
     private fun activateColourSystem(s: String){
@@ -105,16 +124,16 @@ class ColourEditor(name: String="type here"): Campus() {
                 district.findPlot("visual").visible = true
                 when(activeColourSystem){
                     (ActiveColourSystem.RGB)->{
-                        visual.recolour(Colour.rgba256(inputList[0],inputList[1],inputList[2]))
+                        activate(Colour.rgba256(inputList[0],inputList[1],inputList[2]))
                     }
                     (ActiveColourSystem.HSV)->{
-                        visual.recolour(Colour.hsva256(inputList[0],inputList[1],inputList[2]))
+                        activate(Colour.hsva256(inputList[0],inputList[1],inputList[2]))
                     }
                     (ActiveColourSystem.HEX)->{
                         try {
                             val text =  (district.findPlot("hex",1,3).element as TextEditor).text
                             if((text.length==6)||(text.length==3)){
-                                visual.recolour(Colour.byHex(text))
+                                activate(Colour.byHex(text))
                             }else{
                                 throw Exception("string len")
                             }
@@ -129,6 +148,22 @@ class ColourEditor(name: String="type here"): Campus() {
             }
         }
         super.update()
+    }
+
+    fun activate(name: String?, c: Colour){
+        nameEditor.text = name ?: "type here"
+        activate(c)
+    }
+
+    fun activate(c: Colour){
+        visual.recolour(c)
+        for(i in 1..3){
+            (district.findPlot("rgb",i,2).element as TextEditor).text = (listOf(c.r,c.g,c.b)[i-1]*255).toInt().toString()
+        }
+        for(i in 1..3){
+            (district.findPlot("hsv",i,2).element as TextEditor).text = (listOf(c.h,c.s,c.v)[i-1]*255).toInt().toString()
+        }
+        (district.findPlot("hex",1,3).element as TextEditor).text = c.hex.dropLast(2)
     }
 
 
@@ -153,6 +188,12 @@ class ColourEditor(name: String="type here"): Campus() {
             }
         }
         return inputList
+    }
+
+    fun getRecording(): Pair<String?, Colour?> {
+        return recordPair.also {
+            recordPair = Pair(null,null)
+        }
     }
 
     enum class ActiveColourSystem{
