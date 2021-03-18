@@ -10,20 +10,34 @@ import com.pungo.modules.inputProcessor.InputHandler
 import com.pungo.modules.scenes.LayerManager
 import com.pungo.modules.scenes.Scene
 import com.pungo.modules.visuals.PixmapGenerator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import modules.application.PuniversalValues
-import modules.basic.Colour
+import modules.basic.Colours
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
 import modules.uiPlots.SceneDistrict
+import javax.swing.JFileChooser
+import javax.swing.JFrame
+import javax.swing.filechooser.FileNameExtensionFilter
 
 class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReaction.RATED) {
     val motherGrid = TiledDisplay(5,5).also {
         it.modifyTile("test",Displayer(Colour.RED))
+        //it.modifyTile("test",Displayer(Color.RED))
+        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        it.tileDataToTile()
     }
     val tempGrid = TiledDisplay(5,5,).also {
         it.modifyTile("test",Displayer(Colour.RED))
         it.modifyTile("eraser",Displayer(Colour.rgba256(150,150,150,100)))
+        //it.modifyTile("test",Displayer(Color.RED))
+        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        it.tileData.add(TiledDisplay.TileData("eraser",TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
+        //it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
+        it.tileDataToTile()
     }
     var moveActive = false
     var drawActive = false
@@ -172,17 +186,40 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
             it[10].element = SetButton(References.buttonTextBox("save",24),0.8f,0.8f).also {it2->
                 it2.clicked = {
                     deactivateAllButtons()
-                    // TODO SAVE FILE
-                    // motherGrid, save edilecek şey, bu classın fieldı, ordan aradığın yere gidip bakabilirsin, önceki grid sisteminden daha, zarif
-                    // ayrıca da gerekirse sor
-
+                    Gdx.app.postRunnable {
+                        val filechooser = JFileChooser()
+                        filechooser.currentDirectory = Gdx.files.local("/maps").file()
+                        filechooser.fileFilter = FileNameExtensionFilter("Map Files", "map")
+                        val f = JFrame()
+                        f.isVisible = true
+                        f.toFront()
+                        f.isVisible = false
+                        val res = filechooser.showSaveDialog(f)
+                        f.dispose()
+                        if (res == JFileChooser.APPROVE_OPTION) {
+                            saveMap(filechooser.selectedFile.nameWithoutExtension)
+                        }
+                    }
                 }
             }
 
             it[11].element = SetButton(References.buttonTextBox("load",24),0.8f,0.8f).also {it2->
                 it2.clicked = {
                     deactivateAllButtons()
-                    // TODO OPEN FILE
+                    Gdx.app.postRunnable {
+                        val filechooser = JFileChooser()
+                        filechooser.currentDirectory = Gdx.files.local("/maps").file()
+                        filechooser.fileFilter = FileNameExtensionFilter("Map Files", "map")
+                        val f = JFrame()
+                        f.isVisible = true
+                        f.toFront()
+                        f.isVisible = false
+                        val res = filechooser.showOpenDialog(f)
+                        f.dispose()
+                        if (res == JFileChooser.APPROVE_OPTION) {
+                            loadMap(filechooser.selectedFile.nameWithoutExtension)
+                        }
+                    }
                 }
             }
         }
@@ -264,7 +301,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                             }
                             blockList = drawingStyle.blockList(rowRange.toList(),colRange.toList())
                         }else{
-                            val thing = if(drawActive&&(st!=null)) st.id else null
+                            val thing = if(drawActive) "test" else null
                             blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
                             blockList.clear()
                         }
