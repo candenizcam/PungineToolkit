@@ -6,7 +6,7 @@ import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
 import kotlinx.serialization.Serializable
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.uiPlots.DrawData
 
 class TiledDisplay(cols: Int, rows: Int) :Building {
@@ -106,16 +106,16 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
             // add it to tiles list
             val db : DisplayBuilding = when(it.mode) {
                 BrushTypes.PIXMAP -> {
-                    Displayer(Colours.byRGBA256(it.cr, it.cg, it.cb, it.ca))
+                    Displayer(Colour.rgba256(it.cr, it.cg, it.cb, it.ca))
                 }
                 BrushTypes.SINGLETEXTURE -> {
-                    Displayer(Colours.byRGBA256(0,150,150,100))
+                    Displayer(Colour.rgba256(150,150,0,100))
                 }
                 BrushTypes.MULTITEXTURE -> {
-                    Displayer(Colours.byRGBA256(150,0,150,100))
+                    Displayer(Colour.rgba256(150,150,0,100))
                 }
                 BrushTypes.ANIMATION -> {
-                    Displayer(Colours.byRGBA256(150,150,0,100))
+                    Displayer(Colour.rgba256(150,150,0,100))
                 }
             }
             tiles.add(Tile(it.id, db))

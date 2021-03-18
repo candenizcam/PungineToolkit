@@ -2,7 +2,6 @@ package com.toolkit
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.Color
 import com.pungo.modules.basic.geometry.FastGeometry
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.basic.geometry.Rectangle
@@ -14,7 +13,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import modules.application.PuniversalValues
-import modules.basic.Colours
+import modules.basic.Colour
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
@@ -223,6 +222,21 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                 }
             }
         }
+    }
+
+    private fun saveMap(name: String){
+        val json = Json
+        val map = json.encodeToString<List<TiledDisplay.TileLocation>>(motherGrid.tileLocations)
+        val file = Gdx.files.local("maps/$name.map")
+        file.writeString(map, false)
+    }
+
+    private fun loadMap(name: String){
+        val json = Json
+        val file = Gdx.files.local("maps/$name.map")
+        val map = file.readString()
+        motherGrid.tileLocations.clear()
+        motherGrid.tileLocations.addAll(json.decodeFromString<List<TiledDisplay.TileLocation>>(map))
     }
 
     private fun deactivateAllButtons(){
