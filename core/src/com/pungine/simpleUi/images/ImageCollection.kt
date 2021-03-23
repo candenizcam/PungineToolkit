@@ -1,8 +1,10 @@
-package modules.simpleUi
+package com.pungine.simpleUi.images
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.pungine.visuals.Curator
 import modules.basic.Colour
+import modules.visuals.TextureCache
 import kotlin.random.Random
 
 class ImageCollection {
@@ -19,6 +21,18 @@ class ImageCollection {
     private var collection = mutableListOf<PunSprite>()
     var index = 0
     var frameChanger = FrameChanger()
+
+
+    fun getImageInfo(): List<ImageInfo> {
+        return collection.map {
+            val c = TextureCache.getCurator(it)
+            if(c==null){
+                ImageInfo(null,null,it.colour)
+            }else{
+                ImageInfo(c.path,c.visualPath,it.colour)
+            }
+        }
+    }
 
 
     fun recolour(colour: Colour, index: Int = -1){

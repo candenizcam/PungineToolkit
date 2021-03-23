@@ -2,8 +2,9 @@ package modules.simpleUi
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.pungine.simpleUi.images.ImageCollection
+import com.pungine.simpleUi.images.PunSprite
 import com.pungo.modules.basic.geometry.Point
 import com.pungo.modules.visuals.PixmapGenerator
 import modules.basic.Colour

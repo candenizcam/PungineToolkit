@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import com.pungine.simpleUi.images.PunSprite
 
 /** AnimateJson decodes a json file created by adobe animate
  * it only takes the path of the file as input and figures the rest on its own
@@ -16,7 +17,7 @@ import kotlinx.serialization.json.JsonElement
  */
 data class AnimateJson(var path: FileHandle, var texturePath: FileHandle? = null) {
     val meta: Meta
-    private val texture: Texture
+    val texture: Texture
     val frames: Map<String, FrameData>
 
     init {
@@ -54,9 +55,10 @@ data class AnimateJson(var path: FileHandle, var texturePath: FileHandle? = null
     }
 
 
+
     /** This is a basic SubTexture opener that takes region as input
      */
-    fun getSubTextures(region: String? = null): MutableList<Sprite> {
+    fun getSubTextures(region: String? = null): MutableList<PunSprite> {
         val relevant: MutableList<FrameData>
         if (region == null) {
 
@@ -67,15 +69,15 @@ data class AnimateJson(var path: FileHandle, var texturePath: FileHandle? = null
         } else {
             relevant = frames.filterKeys { region in it }.values.toMutableList()
         }
-        return relevant.map { Sprite(texture, it.frame.x, it.frame.y, it.frame.w, it.frame.h) }.toMutableList()
+        return relevant.map { PunSprite(Sprite(texture, it.frame.x, it.frame.y, it.frame.w, it.frame.h)) }.toMutableList()
     }
 
     /**This is for advanced users, it directly takes the filtering function
      *
      */
-    fun getSubTextures(func: (String) -> Boolean): MutableList<Sprite> {
+    fun getSubTextures(func: (String) -> Boolean): MutableList<PunSprite> {
         val relevant: MutableList<FrameData> = frames.filterKeys(func).values.toMutableList()
-        return relevant.map { Sprite(texture, it.frame.x, it.frame.y, it.frame.w, it.frame.h) }.toMutableList()
+        return relevant.map { PunSprite(Sprite(texture, it.frame.x, it.frame.y, it.frame.w, it.frame.h)) }.toMutableList()
     }
 
     /**Disposes the texture

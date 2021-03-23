@@ -1,12 +1,10 @@
-package modules.simpleUi
+package com.pungine.simpleUi.images
 
-import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.pungo.modules.basic.geometry.Rectangle
 import modules.basic.Colour
 import modules.visuals.PuxMap
-import modules.visuals.TextureCache
 
 
 class PunSprite: Sprite {
