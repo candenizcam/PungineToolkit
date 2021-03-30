@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import com.pungine.simpleUi.images.PunSprite
+import modules.simpleUi.images.PunSprite
+
 
 /** AnimateJson decodes a json file created by adobe animate
  * it only takes the path of the file as input and figures the rest on its own

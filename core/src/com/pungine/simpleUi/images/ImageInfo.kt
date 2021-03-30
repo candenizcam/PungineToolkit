@@ -1,4 +1,4 @@
-package com.pungine.simpleUi.images
+package modules.simpleUi.images
 
 import com.badlogic.gdx.files.FileHandle
 import modules.basic.Colour

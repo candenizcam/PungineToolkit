@@ -1,10 +1,10 @@
-package com.pungine.visuals
+package modules.visuals
 
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.pungine.simpleUi.images.PunSprite
-import modules.visuals.AnimateJson
+import modules.simpleUi.images.PunSprite
+
 
 /** This class curates a texture,
  *

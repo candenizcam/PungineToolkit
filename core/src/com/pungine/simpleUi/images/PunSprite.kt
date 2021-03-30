@@ -1,4 +1,4 @@
-package com.pungine.simpleUi.images
+package modules.simpleUi.images
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite

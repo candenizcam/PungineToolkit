@@ -3,8 +3,7 @@ package modules.visuals
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.pungine.visuals.Curator
-import com.pungine.simpleUi.images.PunSprite
+import modules.simpleUi.images.PunSprite
 
 
 object TextureCache {

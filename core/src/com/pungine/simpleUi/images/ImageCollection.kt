@@ -1,8 +1,7 @@
-package com.pungine.simpleUi.images
+package modules.simpleUi.images
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.pungine.visuals.Curator
 import modules.basic.Colour
 import modules.visuals.TextureCache
 import kotlin.random.Random
