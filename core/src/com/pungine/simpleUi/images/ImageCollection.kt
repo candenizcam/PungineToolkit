@@ -26,9 +26,9 @@ class ImageCollection {
         return collection.map {
             val c = TextureCache.getCurator(it)
             if(c==null){
-                ImageInfo(null,null,it.colour)
+                ImageInfo(null,null, it.colour.r, it.colour.g, it.colour.b, it.colour.a)
             }else{
-                ImageInfo(c.path,c.visualPath,it.colour)
+                ImageInfo(c.path?.name(), c.visualPath?.name(), it.colour.r, it.colour.g, it.colour.b, it.colour.a)
             }
         }
     }

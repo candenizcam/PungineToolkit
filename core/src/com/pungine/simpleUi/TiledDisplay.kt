@@ -21,7 +21,6 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
         }
 
     val tiles = mutableListOf<Tile>()
-    val tileData = mutableListOf<TileData>()
     val tileLocations = mutableListOf<TileLocation>()
 
     /** This is the access function for modifying rows and cols
@@ -98,29 +97,6 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
         //TODO("Not yet implemented")
     }
 
-    fun tileDataToTile() {
-        tiles.clear()
-        tileData.forEach {
-            // convert tileData to tile
-            // add it to tiles list
-            val db : DisplayBuilding = when(it.mode) {
-                BrushTypes.PIXMAP -> {
-                    Displayer(Colour.rgba256(it.cr, it.cg, it.cb, it.ca))
-                }
-                BrushTypes.SINGLETEXTURE -> {
-                    Displayer(Colour.rgba256(150,150,0,100))
-                }
-                BrushTypes.MULTITEXTURE -> {
-                    Displayer(Colour.rgba256(150,150,0,100))
-                }
-                BrushTypes.ANIMATION -> {
-                    Displayer(Colour.rgba256(150,150,0,100))
-                }
-            }
-            tiles.add(Tile(it.id, db))
-        }
-    }
-
     class Tile(val id: String, val db: DisplayBuilding)
 
     /*
@@ -135,15 +111,5 @@ class TiledDisplay(cols: Int, rows: Int) :Building {
      */
 
     @Serializable
-    open class TileData(open val id: String, val mode: BrushTypes, val cr: Int, val cg: Int, val cb: Int, val ca: Int)
-
-    @Serializable
     data class TileLocation(val id : String, val row: Int, val col: Int)
-
-    enum class BrushTypes {
-        PIXMAP, // Colour
-        SINGLETEXTURE, // image from file
-        MULTITEXTURE, // ?
-        ANIMATION // animation from json
-    }
 }

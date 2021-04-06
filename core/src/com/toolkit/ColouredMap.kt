@@ -17,6 +17,7 @@ import modules.basic.Colour
 import modules.simpleUi.Displayer
 import modules.simpleUi.SetButton
 import modules.simpleUi.TiledDisplay
+import modules.simpleUi.images.ImageInfo
 import modules.uiPlots.SceneDistrict
 import javax.swing.JFileChooser
 import javax.swing.JFrame
@@ -25,18 +26,12 @@ import javax.swing.filechooser.FileNameExtensionFilter
 class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReaction.RATED) {
     val motherGrid = TiledDisplay(5,5).also {
         it.modifyTile("test",Displayer(Colour.RED))
-        //it.modifyTile("test",Displayer(Color.RED))
-        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
-        it.tileDataToTile()
+        it.modifyTile("visualTest", Displayer(Gdx.files.internal("pangolin.png")))
     }
     val tempGrid = TiledDisplay(5,5,).also {
         it.modifyTile("test",Displayer(Colour.RED))
+        it.modifyTile("visualTest", Displayer(Gdx.files.internal("pangolin.png")))
         it.modifyTile("eraser",Displayer(Colour.rgba256(150,150,150,100)))
-        //it.modifyTile("test",Displayer(Color.RED))
-        it.tileData.add(TiledDisplay.TileData("test", TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
-        it.tileData.add(TiledDisplay.TileData("eraser",TiledDisplay.BrushTypes.PIXMAP, 150,150,150,100))
-        //it.modifyTile("eraser",Displayer(Colours.byRGBA256(150,150,150,100)))
-        it.tileDataToTile()
     }
     var moveActive = false
     var drawActive = false
@@ -225,18 +220,33 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
     }
 
     private fun saveMap(name: String){
-        val json = Json
-        val map = json.encodeToString<List<TiledDisplay.TileLocation>>(motherGrid.tileLocations)
-        val file = Gdx.files.local("maps/$name.map")
+        val map = Json.encodeToString<List<TiledDisplay.TileLocation>>(motherGrid.tileLocations)
+        val file = Gdx.files.local("maps/$name/$name.map")
+        val tileFile = Gdx.files.local("maps/$name/$name.tiles")
+        val tileData = mutableListOf<Pair<String, List<ImageInfo>>>()
+        for (tile in motherGrid.tiles) {
+            tileData.add(Pair(tile.id, (tile.db as Displayer).imageCollection.getImageInfo()))
+        }
+        val tiles = Json.encodeToString(tileData)
         file.writeString(map, false)
+        tileFile.writeString(tiles, false)
     }
 
     private fun loadMap(name: String){
-        val json = Json
-        val file = Gdx.files.local("maps/$name.map")
+        val file = Gdx.files.local("maps/$name/$name.map")
+        val tileFile = Gdx.files.local("maps/$name/$name.tiles")
         val map = file.readString()
+        val tileData = Json.decodeFromString<List<Pair<String, List<ImageInfo>>>>(tileFile.readString())
         motherGrid.tileLocations.clear()
-        motherGrid.tileLocations.addAll(json.decodeFromString<List<TiledDisplay.TileLocation>>(map))
+        motherGrid.tileLocations.addAll(Json.decodeFromString<List<TiledDisplay.TileLocation>>(map))
+        motherGrid.tiles.clear()
+        for (tile in tileData) {
+            if(tile.second[0].filePath == null) {
+                motherGrid.tiles.add(TiledDisplay.Tile(tile.first, Displayer(Colour.rgba(tile.second[0].cr, tile.second[0].cg, tile.second[0].cb, tile.second[0].ca))))
+            } else {
+                motherGrid.tiles.add(TiledDisplay.Tile(tile.first, Displayer(Gdx.files.internal(tile.second[0].filePath))))
+            }
+        }
     }
 
     private fun deactivateAllButtons(){
