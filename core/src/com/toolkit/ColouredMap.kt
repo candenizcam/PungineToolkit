@@ -281,6 +281,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                     Displayer(p.second!!)
                 }
                 motherGrid.modifyTile(p.first!!,d)
+                tempGrid.modifyTile(p.first!!,d)
             }
         }
 
@@ -325,7 +326,7 @@ class ColouredMap: Scene("colouredMap",sceneScaling = SceneDistrict.ResizeReacti
                             }
                             blockList = drawingStyle.blockList(rowRange.toList(),colRange.toList())
                         }else{
-                            val thing = if(drawActive) "test" else null
+                            val thing = if(drawActive&&(st!=null)) st.id else null
                             blockList.forEach { motherGrid.modifyGrid(thing,it.first,it.second)}
                             blockList.clear()
                         }
